@@ -9,9 +9,9 @@ function remote_lua_loader(port)
     local maxsize = 500 * 1024  -- 500kb
     local payload_buf = malloc(maxsize)
 
-    local sock_fd = syscall.socket(AF_INET, SOCK_STREAM, 0)
+    local sock_fd = create_socket(AF_INET, SOCK_STREAM, 0)
     if sock_fd < 0 then
-        error("socket() error: " .. get_error_string())
+        error("create_socket error")
     end
 
     write32(enable, 1)
@@ -41,7 +41,8 @@ function remote_lua_loader(port)
     if current_ip then
         network_str = string.format("%s:%d", current_ip, port)
     else
-        network_str = string.format("port %d", port)
+        show_dialog("Network not found")
+        return
     end
 
     show_dialog(string.format("%s\nRemote Lua Loader\nPlatform: %s\nFW: %s\nListening: %s",
@@ -55,9 +56,9 @@ function remote_lua_loader(port)
         if client_fd < 0 then
             syscall.close(sock_fd)
             
-            sock_fd = syscall.socket(AF_INET, SOCK_STREAM, 0)
+            sock_fd = create_socket(AF_INET, SOCK_STREAM, 0)
             if sock_fd < 0 then
-                error("socket() error: " .. get_error_string())
+                error("create_socket error")
             end
 
             write32(enable, 1)
@@ -98,24 +99,11 @@ function remote_lua_loader(port)
             if not read_error and total_read > 0 then
                 local lua_code = read_buffer(payload_buf, total_read)
                 send_notification("Executing payload...")
-                run_lua_code(lua_code)
+                run_lua_buffer(lua_code)
                 send_notification("Executed successfully")
             end
         end
     end
 
     syscall.close(sock_fd)
-end
-
-function run_lua_code(code)
-    local func, err = load(code)
-    if not func then
-        send_notification("Lua load error:\n" .. err)
-        return
-    end
-    
-    local status, result = xpcall(func, debug.traceback)
-    if not status then
-        show_dialog("Lua exec error:\n" .. result)
-    end
 end

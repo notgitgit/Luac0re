@@ -279,3 +279,63 @@ function get_nidpath()
     return read_null_terminated_string(path_buffer)
 end
 
+function run_lua_buffer(code)
+    local func, err = load(code)
+    if not func then
+        send_notification("Lua load error:\n" .. err)
+        return
+    end
+    
+    local status, result = xpcall(func, debug.traceback)
+    if not status then
+        show_dialog("Lua exec error:\n" .. result)
+    end
+end
+
+function run_lua_file(filename)
+    local func, err = loadfile(filename)
+    if not func then
+        send_notification("Lua load error:\n" .. err)
+        return
+    end
+    
+    local status, result = xpcall(func, debug.traceback)
+    if not status then
+        show_dialog("Lua exec error:\n" .. result)
+    end
+end
+
+function create_socket(domain, type, protocol)
+
+    -- PS4 or PS5 below firmware 8.00 or domain = 0: use syscall directly
+    if PLATFORM == "PS4" or (PLATFORM == "PS5" and tonumber(FW_VERSION) < 8.00) or domain == 0 then
+        local fd = syscall.socket(domain, type, protocol)
+        if fd < 0 then
+            send_notification("create_socket error: " .. get_error_string())
+            return -1
+        end
+        return fd
+    end
+
+    -- PS5 firmware 8.00+, non-zero domain: route through JIT socket path
+    local jit_fd = jit_syscall.socket(domain, type, protocol)
+    if jit_fd < 0 then
+        send_notification("create_socket error: " .. jit_get_error_string())
+        return -1
+    end
+
+    local fd = jit_send_recv_fd(jit_fd, NEW_JIT_SOCK, NEW_MAIN_SOCK)
+    if fd < 0 then
+        send_notification("create_socket error")
+        return -1
+    end
+
+    return fd
+    
+end
+
+
+function write_string(dest, str)
+    write_buffer(dest, str)
+    write8(dest + #str, 0)
+end

@@ -8,20 +8,30 @@ require "func"
 require "misc"
 require "syscall"
 require "remotelualoader"
+require "jit"
+
+version_string = "Luac0re 2.0 by Gezine"
 
 init_native_functions()
-
-version_string = "Luac0re 1.1 by Gezine"
-
 syscall.init()
--- send_notification("syscall initialized")
 
 FW_VERSION = get_fwversion()
 send_notification(version_string .. "\nPLATFORM : " ..  PLATFORM .. "\nFW : " .. FW_VERSION)
 
--- From PS5 fw 8.00 sony blocked socket creation with non AF_UNIX domains
-if PLATFORM == "PS5" and tonumber(FW_VERSION) >= 8.00 then
-    show_dialog("PS5 FW " .. FW_VERSION .. " does not support remote lua loader\nRun lua script locally")
+sceKernelRemoveExceptionHandler(11)
+local status, errmsg = jit_init()
+if not status then
+    show_dialog("JIT exploit failed\n" .. errmsg)
+    return
+end
+
+nid_luafile = "/" .. get_nidpath() .. "/common_temp/nid.lua"
+auto_luafile = "/savedata0/lua/auto.lua"
+if file_exists(nid_luafile) then
+    run_lua_file(nid_luafile)
+elseif file_exists(auto_luafile) then
+    run_lua_file(auto_luafile)
 else
     remote_lua_loader(9026)
 end
+

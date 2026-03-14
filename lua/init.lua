@@ -17,7 +17,7 @@
 -- Stop GC for sanity
 collectgarbage("stop")
 
-package.path = package.path .. ";/savedata0/lua/?.lua"
+package.path = package.path .. ";/savedata0/lua/?.lua;/savedata0/lua/jit/?.lua"
 
 old_error = error
 
@@ -43,5 +43,5 @@ if not status then
     error(err) -- Throw error to masticore
 end
 
--- Removing this will return to masticore 
+-- DO NOT RETURN TO MASTICORE WHEN JIT HACK IS ENABLED
 while true do end

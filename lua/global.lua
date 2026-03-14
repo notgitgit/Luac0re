@@ -6,6 +6,7 @@ STDIN_FILENO = 0
 STDOUT_FILENO = 1
 STDERR_FILENO = 2
 
+AF_UNIX = 1
 AF_INET = 2
 AF_INET6 = 28
 AF_ROUTE = 17
@@ -17,8 +18,10 @@ IPPROTO_IPV6 = 41
 IPV6_PKTINFO = 46
 INADDR_ANY = 0
 
-SOL_SOCKET = 0xffff  -- options for socket level
-SO_REUSEADDR = 4  -- allow local address reuse
+SOL_SOCKET = 0xffff
+SO_REUSEADDR = 4
+
+SCM_RIGHTS = 1
 
 PROT_NONE = 0x0
 PROT_READ = 0x1
@@ -85,26 +88,31 @@ LUA_PIVOT2            = FIOS_BASE + 0x19b32
 MOV_DEREF_RDI_RAX_RET = EBOOT_BASE + 0x75b6c
 MOV_RAX_DEREF_RAX_RET = EBOOT_BASE + 0x23ac20
 
-
 SCE_KERNEL_DLSYM = 0
 
 EBOOT_OFFSETS = {
-    calloc                    = EBOOT_BASE + 0x388EC0,
-    sceKernelOpen             = EBOOT_BASE + 0x388FB0,
-    sceKernelWrite            = EBOOT_BASE + 0x388FA0,
-    sceKernelClose            = EBOOT_BASE + 0x388FC0,
-    sceKernelStat             = EBOOT_BASE + 0x388FD0,
-    sceKernelUsleep           = EBOOT_BASE + 0x389640,
-    sceMsgDialogInitialize    = EBOOT_BASE + 0x389128,
-    sceMsgDialogOpen          = EBOOT_BASE + 0x389158,
-    sceMsgDialogTerminate     = EBOOT_BASE + 0x389418,
-}
+    calloc                                = EBOOT_BASE + 0x388EC0,
+    sceKernelOpen                         = EBOOT_BASE + 0x388FB0,
+    sceKernelWrite                        = EBOOT_BASE + 0x388FA0,
+    sceKernelClose                        = EBOOT_BASE + 0x388FC0,
+    sceKernelStat                         = EBOOT_BASE + 0x388FD0,
+    sceKernelUsleep                       = EBOOT_BASE + 0x389640,
+    sceMsgDialogInitialize                = EBOOT_BASE + 0x389128,
+    sceMsgDialogOpen                      = EBOOT_BASE + 0x389158,
+    sceMsgDialogTerminate                 = EBOOT_BASE + 0x389418,
+    sceKernelRemoveExceptionHandler       = EBOOT_BASE + 0x389570,
+    scePthreadSelf                        = EBOOT_BASE + 0x3895C8,
+    sceKernelJitCreateSharedMemory        = EBOOT_BASE + 0x389528,
+    sceKernelJitCreateAliasOfSharedMemory = EBOOT_BASE + 0x389530,
+    sceKernelJitMapSharedMemory           = EBOOT_BASE + 0x389520,
+    recv_fd                               = EBOOT_BASE + 0x728A0, 
+}    
 
 LIBC_OFFSETS = {
-    sceKernelGetModuleInfoFromAddr = LIBC_BASE + 0xCBDA8,
-    gettimeofday                   = LIBC_BASE + 0xCBC50,
-    libc_strerror                  = LIBC_BASE + 0xADE0,
-    libc_error                     = LIBC_BASE + 0xCBC58,
+    sceKernelGetModuleInfoFromAddr        = LIBC_BASE + 0xCBDA8,
+    gettimeofday                          = LIBC_BASE + 0xCBC50,
+    libc_strerror                         = LIBC_BASE + 0xADE0,
+    libc_error                            = LIBC_BASE + 0xCBC58,
 }
 
 SYSCALL_TABLE = {
@@ -114,6 +122,8 @@ SYSCALL_TABLE = {
     close = 0x6,
     setuid = 0x17,
     getuid = 0x18,
+    recvmsg = 0x1b,
+    sendmsg = 0x1c,
     accept = 0x1e,
     pipe = 0x2a,
     mprotect = 0x4a,

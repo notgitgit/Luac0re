@@ -6,7 +6,7 @@ function syscall.init()
     
     if PLATFORM == "PS4" then
         -- PS4 requires valid syscall wrapper from libkernel .text
-        local libkernel_text = read_buffer(LIBKERNEL_BASE, 0x40000)
+        local libkernel_text = read_buffer(LIBKERNEL_BASE, 0x20000)
         -- mov rax, <num>; mov r10, rcx; syscall
         local matches = find_pattern(libkernel_text, "48 c7 c0 ? ? ? ? 49 89 ca 0f 05")
         

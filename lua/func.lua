@@ -132,9 +132,9 @@ function init_dlsym()
         end
     elseif PLATFORM == "PS5" then
         -- PS5: For firmware > 10.01, calculate offset dynamically
+        -- Was tested until 12.xx
         if major > 10 or major == 10 then
             SCE_KERNEL_DLSYM = read64(LIBC_OFFSETS.sceKernelGetModuleInfoFromAddr) - 0x450
-            send_notification("Warning : PS5 sceKernelDlsym offset not found\nUsing predicted value " .. to_hex(SCE_KERNEL_DLSYM))
         else
             SCE_KERNEL_DLSYM = read64(LIBC_OFFSETS.sceKernelGetModuleInfoFromAddr) - 0x480
         end
@@ -143,8 +143,7 @@ function init_dlsym()
     end
     
     -- Wrap the function for easier calling
-    sceKernelDlsym = func_wrap(SCE_KERNEL_DLSYM)
-    
+    sceKernelDlsym = func_wrap(SCE_KERNEL_DLSYM)    
 end
 
 function dlsym_test()
@@ -168,17 +167,24 @@ function dlsym_test()
 end
 
 function init_native_functions()
-    calloc                           = func_wrap(read64(EBOOT_OFFSETS.calloc))
-    sceKernelOpen                    = func_wrap(read64(EBOOT_OFFSETS.sceKernelOpen))
-    sceKernelWrite                   = func_wrap(read64(EBOOT_OFFSETS.sceKernelWrite))
-    sceKernelClose                   = func_wrap(read64(EBOOT_OFFSETS.sceKernelClose))
-    sceKernelStat                    = func_wrap(read64(EBOOT_OFFSETS.sceKernelStat))
-    sceKernelUsleep                  = func_wrap(read64(EBOOT_OFFSETS.sceKernelUsleep))
-    sceMsgDialogInitialize           = func_wrap(read64(EBOOT_OFFSETS.sceMsgDialogInitialize))
-    sceMsgDialogOpen                 = func_wrap(read64(EBOOT_OFFSETS.sceMsgDialogOpen))
-    sceMsgDialogTerminate            = func_wrap(read64(EBOOT_OFFSETS.sceMsgDialogTerminate))
-    sceKernelGetModuleInfoFromAddr   = func_wrap(read64(LIBC_OFFSETS.sceKernelGetModuleInfoFromAddr))
-    libc_strerror                    = func_wrap(LIBC_OFFSETS.libc_strerror)
-    libc_error                       = func_wrap(read64(LIBC_OFFSETS.libc_error))
-
+    calloc                                = func_wrap(read64(EBOOT_OFFSETS.calloc))
+    sceKernelOpen                         = func_wrap(read64(EBOOT_OFFSETS.sceKernelOpen))
+    sceKernelWrite                        = func_wrap(read64(EBOOT_OFFSETS.sceKernelWrite))
+    sceKernelClose                        = func_wrap(read64(EBOOT_OFFSETS.sceKernelClose))
+    sceKernelStat                         = func_wrap(read64(EBOOT_OFFSETS.sceKernelStat))
+    sceKernelUsleep                       = func_wrap(read64(EBOOT_OFFSETS.sceKernelUsleep))
+    sceMsgDialogInitialize                = func_wrap(read64(EBOOT_OFFSETS.sceMsgDialogInitialize))
+    sceMsgDialogOpen                      = func_wrap(read64(EBOOT_OFFSETS.sceMsgDialogOpen))
+    sceMsgDialogTerminate                 = func_wrap(read64(EBOOT_OFFSETS.sceMsgDialogTerminate))
+    sceKernelGetModuleInfoFromAddr        = func_wrap(read64(LIBC_OFFSETS.sceKernelGetModuleInfoFromAddr))
+    sceKernelRemoveExceptionHandler       = func_wrap(read64(EBOOT_OFFSETS.sceKernelRemoveExceptionHandler))
+    scePthreadSelf                        = func_wrap(read64(EBOOT_OFFSETS.scePthreadSelf))
+    scePthreadCancel                      = func_wrap(read64(EBOOT_OFFSETS.scePthreadSelf) + 0x10)
+    sceKernelJitCreateSharedMemory        = func_wrap(read64(EBOOT_OFFSETS.sceKernelJitCreateSharedMemory))
+    sceKernelJitCreateAliasOfSharedMemory = func_wrap(read64(EBOOT_OFFSETS.sceKernelJitCreateAliasOfSharedMemory))
+    sceKernelJitMapSharedMemory           = func_wrap(read64(EBOOT_OFFSETS.sceKernelJitMapSharedMemory))
+    recv_fd                               = func_wrap(EBOOT_OFFSETS.recv_fd)
+    libc_strerror                         = func_wrap(LIBC_OFFSETS.libc_strerror)
+    libc_error                            = func_wrap(read64(LIBC_OFFSETS.libc_error))
+    
 end

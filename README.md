@@ -6,26 +6,22 @@ Luac0re is a [mast1c0re](https://cturt.github.io/mast1c0re.html) variation that 
 
 - The original [mast1c0re for Okage](https://github.com/McCaulay/mast1c0re) uses PS2 code execution only, which requires the [PS2SDK](https://github.com/ps2dev/ps2sdk) to compile the code.  
 - Luac0re uses minimal PS2 shellcode to escape ps2emu, then leverages the Lua 5.3 interpreter already embedded in the main executable (originally intended for ps2emu configuration) to simplify code writing and execution.
+- Starting from version 2.0, a JIT compiler exploit has been added, enabling arbitrary native userland code execution on the latest PS4/PS5 firmwares without requiring a kernel exploit.  
+- Additionally, non AF_UNIX domain socket creation restriction introduced in PS5 firmware 8.00 can now be bypassed using the JIT exploit.  
 
 ## Requirements
 
 - PS4 or PS5 console
 - Disc or digital version of *Star Wars Racer Revenge* USA (CUSA03474) or EU (CUSA03492) region  
 
-## Restriction
-
-- While Luac0re works on every PS4 (current 13.02) and PS5 (current 12.40) firmware
-- From PS5 fw 8.00 sony blocked socket creation with non AF_UNIX domains
-- Which means you cannot use network at PS5 8.00 >=
-- PS4 has no restriction
-
 ## Usage
 
 1. Download the latest [release](https://github.com/Gezine/Luac0re/releases) ZIP file and extract it
-2. Copy the `lua` directory and `VMC0.card` file into your savedata
-3. For editing savedata, refer to the remote_lua_loader [SETUP guide](https://github.com/shahrilnet/remote_lua_loader/blob/main/SETUP.md)
-4. Start the game and go to "OPTIONS -> HALL OF FAME"
-5. Enjoy
+2. The included savedata has been modified to allow a larger savedata image, as the original was too small to fit all the required files.  
+3. As a result, existing savedata image cannot be used — resigning the included savedata is mandatory.  
+4. For resigning the savedata, refer to the remote_lua_loader [SETUP guide](https://github.com/shahrilnet/remote_lua_loader/blob/main/SETUP.md)
+5. Start the game and go to "OPTIONS -> HALL OF FAME"
+6. Enjoy
 
 ## Credits
 
