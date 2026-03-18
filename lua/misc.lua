@@ -308,7 +308,7 @@ end
 function create_socket(domain, type, protocol)
 
     -- PS4 or PS5 below firmware 8.00 or domain = 0: use syscall directly
-    if PLATFORM == "PS4" or (PLATFORM == "PS5" and tonumber(FW_VERSION) < 8.00) or domain == 0 then
+    if PLATFORM == "PS4" or (PLATFORM == "PS5" and tonumber(FW_VERSION) < 8.00) or domain == AF_UNIX then
         local fd = syscall.socket(domain, type, protocol)
         if fd < 0 then
             send_notification("create_socket error: " .. get_error_string())
@@ -333,7 +333,6 @@ function create_socket(domain, type, protocol)
     return fd
     
 end
-
 
 function write_string(dest, str)
     write_buffer(dest, str)

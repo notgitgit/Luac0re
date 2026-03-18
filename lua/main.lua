@@ -10,7 +10,7 @@ require "syscall"
 require "remotelualoader"
 require "jit"
 
-version_string = "Luac0re 2.1 by Gezine"
+version_string = "Luac0re 2.1b by Gezine"
 
 init_native_functions()
 patch_malloc()

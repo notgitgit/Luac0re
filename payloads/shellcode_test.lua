@@ -47,4 +47,3 @@ send_notification(to_hex(read64(rx_addr + 8)))
 rwx_test = func_wrap(rx_addr)
 
 send_notification(to_hex(rwx_test()))
-
